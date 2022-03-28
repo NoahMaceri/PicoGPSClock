@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component_viewer xmlns:xs="http://www.w3.org/2001/XMLSchemainstance" schemaVersion="0.1" xs:noNamespaceSchemaLocation="Component_Viewer.xsd">
+   <component name="MyExample" version="1.0.0" />
+   <objects>
+      <object name="SystemStack">
+         <var name="StackStart" type="int32_t" value="0" />
+         <var name="StackSize" type="int32_t" value="0" />
+         <var name="StackMax" type="int32_t" value="0" />
+         <var name="StackUsed" type="int32_t" value="0" />
+         <calc>StackStart = __FindSymbol ("STACK$$Base");
+ StackSize = __FindSymbol ("STACK$$Limit") - StackStart;
+ StackMax = __CalcMemUsed(StackStart, StackSize, 0xCDCDCDCD, 0xABABABAB);
+ StackUsed = __FindSymbol ("STACK$$Limit") - __GetRegVal("MSP");</calc>
+         <out name="SystemStack">
+            <item property="Start" value="%x[StackStart]" />
+            <item property="Size" value="%x[StackSize]" />
+            <item>
+               <print cond="__Running == 0" property="Used" value="%d[StackUsed*100/StackSize]%% [%d[StackUsed]]" />
+               <print cond="__Running == 1" property="Used" value="unknown" />
+            </item>
+            <item alert="(StackMax &gt;&gt; 31)" property="Max" value="%d[(StackMax&gt;&gt;20) &amp; 0xFF]%% [%d[StackMax &amp; 0xFFFFF]]" />
+         </out>
+      </object>
+   </objects>
+</component_viewer>
